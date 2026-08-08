@@ -9,7 +9,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
-import { deleteOrder, listOrders, setOrderStatus, updateOrder } from "@/lib/admin.functions";
+import {
+  claimAdmin,
+  deleteOrder,
+  listOrders,
+  setOrderStatus,
+  updateOrder,
+} from "@/lib/admin.functions";
 import { AREA_LABEL, PRODUCT, type DeliveryArea } from "@/lib/product";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
@@ -62,6 +68,7 @@ function Dashboard() {
   const saveOrder = useServerFn(updateOrder);
   const changeStatus = useServerFn(setOrderStatus);
   const removeOrder = useServerFn(deleteOrder);
+  const claim = useServerFn(claimAdmin);
 
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -69,7 +76,16 @@ function Dashboard() {
 
   const ordersQuery = useQuery({
     queryKey: ["admin-orders"],
-    queryFn: () => fetchOrders({ data: undefined }) as Promise<OrderRow[]>,
+    queryFn: async () => {
+      try {
+        return (await fetchOrders({ data: undefined })) as OrderRow[];
+      } catch (err) {
+        // A brand-new store has no admin yet: claim it, then retry once.
+        const claimed = await claim({ data: undefined });
+        if (!claimed.granted) throw err;
+        return (await fetchOrders({ data: undefined })) as OrderRow[];
+      }
+    },
   });
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ["admin-orders"] });
