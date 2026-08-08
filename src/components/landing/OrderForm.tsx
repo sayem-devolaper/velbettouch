@@ -3,7 +3,13 @@ import { useServerFn } from "@tanstack/react-start";
 
 import { createOrder } from "@/lib/orders.functions";
 import { orderInputSchema } from "@/lib/orders.schema";
-import { AREA_LABEL, PRODUCT, type DeliveryArea } from "@/lib/product";
+import {
+  AREA_LABEL,
+  FREE_DELIVERY_MIN_QTY,
+  PRODUCT,
+  getDeliveryCharge,
+  type DeliveryArea,
+} from "@/lib/product";
 
 type Tracking = Record<string, string>;
 
@@ -43,7 +49,8 @@ export function OrderForm() {
     setPageUrl(window.location.href.slice(0, 1000));
   }, []);
 
-  const deliveryCharge = PRODUCT.delivery[area];
+  const deliveryCharge = getDeliveryCharge(area, qty);
+  const freeDelivery = qty >= FREE_DELIVERY_MIN_QTY;
   const total = PRODUCT.price * qty + deliveryCharge;
 
   async function handleSubmit(event: React.FormEvent) {
@@ -219,6 +226,9 @@ export function OrderForm() {
               +
             </button>
           </div>
+          <p className="mt-2 text-sm font-semibold text-success">
+            ২ পিস অর্ডার করলে সারা বাংলাদেশে ডেলিভারি চার্জ একদম ফ্রি!
+          </p>
         </div>
 
         <div>
@@ -242,7 +252,9 @@ export function OrderForm() {
           </div>
           <div className="mt-1 flex justify-between">
             <span>ডেলিভারি চার্জ</span>
-            <span>৳{deliveryCharge}</span>
+            <span className={freeDelivery ? "font-bold text-success" : undefined}>
+              {freeDelivery ? "ফ্রি" : `৳${deliveryCharge}`}
+            </span>
           </div>
           <div className="mt-2 flex justify-between border-t border-border pt-2 text-lg font-bold text-price">
             <span>সর্বমোট</span>
