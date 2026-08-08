@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 
 import { Check } from "@/components/landing/Check";
 import { CtaButton } from "@/components/landing/CtaButton";
