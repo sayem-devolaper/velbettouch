@@ -79,6 +79,10 @@ function Index() {
             পকেট সাইজ | গোপন প্যাকেজিং | সম্পূর্ণ নিরাপদ
           </p>
 
+          <p className="mt-4 rounded-md border-2 border-success bg-success/10 px-4 py-3 text-lg font-bold text-success">
+            🎁 ২ পিস অর্ডার করলে সারা বাংলাদেশে ডেলিভারি চার্জ একদম ফ্রি!
+          </p>
+
           <div className="mt-5">
             <CtaButton>অর্ডার করুন — ৳{PRODUCT.price}</CtaButton>
           </div>
@@ -93,6 +97,10 @@ function Index() {
                 <tr>
                   <th className="px-4 py-3 font-medium">ঢাকার বাহিরে ডেলিভারি চার্জ</th>
                   <td className="px-4 py-3 font-bold">৳ {PRODUCT.delivery.outside_dhaka} টাকা</td>
+                </tr>
+                <tr className="border-t border-border bg-success/10">
+                  <th className="px-4 py-3 font-medium">২ পিস বা তার বেশি অর্ডারে</th>
+                  <td className="px-4 py-3 font-bold text-success">ডেলিভারি ফ্রি</td>
                 </tr>
               </tbody>
             </table>

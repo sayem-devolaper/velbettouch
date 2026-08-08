@@ -12,6 +12,14 @@ export const PRODUCT = {
 
 export type DeliveryArea = keyof typeof PRODUCT.delivery;
 
+/** ২ পিস বা তার বেশি অর্ডারে সারা বাংলাদেশে ডেলিভারি চার্জ ফ্রি */
+export const FREE_DELIVERY_MIN_QTY = 2;
+
+export function getDeliveryCharge(area: DeliveryArea, quantity: number): number {
+  if (quantity >= FREE_DELIVERY_MIN_QTY) return 0;
+  return PRODUCT.delivery[area];
+}
+
 export const AREA_LABEL: Record<DeliveryArea, string> = {
   inside_dhaka: "ঢাকা সিটির ভেতরে (৳৬০)",
   outside_dhaka: "ঢাকার বাহিরে (৳১২০)",

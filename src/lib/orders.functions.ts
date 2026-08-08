@@ -3,7 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 
 import type { Database } from "@/integrations/supabase/types";
 import { orderInputSchema } from "./orders.schema";
-import { PRODUCT } from "./product";
+import { PRODUCT, getDeliveryCharge } from "./product";
 
 export const createOrder = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => orderInputSchema.parse(input))
@@ -25,7 +25,7 @@ export const createOrder = createServerFn({ method: "POST" })
       },
     });
 
-    const deliveryCharge = PRODUCT.delivery[data.delivery_area];
+    const deliveryCharge = getDeliveryCharge(data.delivery_area, data.quantity);
     const total = PRODUCT.price * data.quantity + deliveryCharge;
 
     const { error } = await supabase.from("orders").insert({

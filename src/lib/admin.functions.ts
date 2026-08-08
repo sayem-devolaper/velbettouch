@@ -42,8 +42,8 @@ export const updateOrder = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => updateSchema.parse(input))
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
-    const { PRODUCT } = await import("./product");
-    const deliveryCharge = PRODUCT.delivery[data.delivery_area];
+    const { PRODUCT, getDeliveryCharge } = await import("./product");
+    const deliveryCharge = getDeliveryCharge(data.delivery_area, data.quantity);
     const total = PRODUCT.price * data.quantity + deliveryCharge;
     const { error } = await context.supabase
       .from("orders")
