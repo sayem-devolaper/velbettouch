@@ -98,3 +98,23 @@ export const isAdmin = createServerFn({ method: "POST" })
     });
     return { admin: Boolean(data) };
   });
+
+// First signed-in user of a fresh store becomes the admin. Once an admin
+// exists, this never grants anything again.
+export const claimAdmin = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { count } = await supabaseAdmin
+      .from("user_roles")
+      .select("id", { count: "exact", head: true })
+      .eq("role", "admin");
+
+    if ((count ?? 0) > 0) return { granted: false as const };
+
+    const { error } = await supabaseAdmin
+      .from("user_roles")
+      .insert({ user_id: context.userId, role: "admin" });
+    if (error) return { granted: false as const };
+    return { granted: true as const };
+  });
