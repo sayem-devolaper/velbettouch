@@ -77,15 +77,12 @@ function Dashboard() {
   const ordersQuery = useQuery({
     queryKey: ["admin-orders"],
     queryFn: async () => {
-      try {
-        return (await fetchOrders({ data: undefined })) as OrderRow[];
-      } catch (err) {
-        // A brand-new store has no admin yet: claim it, then retry once.
-        const claimed = await claim({ data: undefined });
-        if (!claimed.granted) throw err;
-        return (await fetchOrders({ data: undefined })) as OrderRow[];
-      }
+      // A brand-new store has no admin yet: the first signed-in user claims it.
+      // Runs before the fetch so a fresh store never sees a "Forbidden" error.
+      await claim({ data: undefined }).catch(() => undefined);
+      return (await fetchOrders({ data: undefined })) as OrderRow[];
     },
+    retry: false,
   });
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ["admin-orders"] });
