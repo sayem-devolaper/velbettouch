@@ -221,6 +221,14 @@ function Index() {
         <p className="mt-3 text-sm text-muted-foreground">
           সারা বাংলাদেশে হোম ডেলিভারি | ১০০% গোপন প্যাকেজিং
         </p>
+        <div className="mt-4 flex justify-center gap-4 text-sm">
+          <Link to="/track" className="font-semibold text-primary underline">
+            আমার অর্ডার দেখুন
+          </Link>
+          <Link to="/auth" className="text-muted-foreground underline">
+            অ্যাডমিন লগইন
+          </Link>
+        </div>
       </footer>
 
       <StickyBar />
