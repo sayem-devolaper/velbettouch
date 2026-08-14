@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -149,6 +149,9 @@ function Dashboard() {
             </p>
           </div>
           <div className="flex gap-2">
+            <Button variant="outline" asChild>
+              <Link to="/ads">অ্যাডস সেটআপ</Link>
+            </Button>
             <Button variant="outline" onClick={() => ordersQuery.refetch()}>
               রিফ্রেশ
             </Button>
