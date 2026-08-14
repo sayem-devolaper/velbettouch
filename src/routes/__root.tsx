@@ -12,6 +12,8 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
+import { MetaPixel } from "@/components/tracking/MetaPixel";
+import { getPublicAdsSettings } from "@/lib/ads.functions";
 
 function NotFoundComponent() {
   return (
@@ -74,7 +76,14 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
+  loader: async () => {
+    try {
+      return await getPublicAdsSettings();
+    } catch {
+      return { pixelId: null, domainVerification: null, currency: "BDT" };
+    }
+  },
+  head: ({ loaderData }) => ({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
@@ -86,6 +95,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@Lovable" },
+      ...(loaderData?.domainVerification
+        ? [{ name: "facebook-domain-verification", content: loaderData.domainVerification }]
+        : []),
     ],
     links: [
       {
@@ -123,11 +135,13 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const ads = Route.useLoaderData();
 
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
+      <MetaPixel pixelId={ads?.pixelId ?? null} />
       <Toaster />
     </QueryClientProvider>
   );
