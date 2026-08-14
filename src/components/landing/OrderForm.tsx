@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
+import { useNavigate } from "@tanstack/react-router";
 
 import { createOrder } from "@/lib/orders.functions";
 import { orderInputSchema } from "@/lib/orders.schema";
@@ -25,6 +26,7 @@ const TRACK_KEYS = [
 
 export function OrderForm() {
   const submitOrder = useServerFn(createOrder);
+  const navigate = useNavigate();
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -102,6 +104,9 @@ export function OrderForm() {
       ];
       const url = `https://wa.me/${PRODUCT.whatsapp}?text=${encodeURIComponent(lines.join("\n"))}`;
       window.open(url, "_blank", "noopener,noreferrer");
+
+      // Send the buyer to the thank-you page, where the Purchase event fires.
+      void navigate({ to: "/thank-you", search: { order: result.orderId } });
     } catch (error) {
       console.error(error);
       setServerError("কিছু সমস্যা হয়েছে, আবার চেষ্টা করুন অথবা কল করুন।");
