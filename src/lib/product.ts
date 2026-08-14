@@ -1,12 +1,14 @@
 export const PRODUCT = {
   title: "১ প্যাকেটে ১০ পিস টিস্যু থাকবে",
   brand: "ম্যাজিক টিস্যু",
-  price: 690,
+  price: 590,
   oldPrice: 1100,
-  discount: 37,
-  phone: "01752955648",
-  phoneDisplay: "01752 955 648",
-  whatsapp: "8801752955648",
+  discount: 46,
+  phone: "01631025079",
+  phoneDisplay: "01631 025 079",
+  whatsapp: "8801631025079",
+  /** Facebook Page username for Messenger chat (m.me/<username>) */
+  messenger: "magictissuebd",
   delivery: { inside_dhaka: 60, outside_dhaka: 120 },
 } as const;
 

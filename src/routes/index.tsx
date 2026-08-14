@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 
 import { Check } from "@/components/landing/Check";
 import { CtaButton } from "@/components/landing/CtaButton";
+import { FloatingContact } from "@/components/landing/FloatingContact";
 import { OrderForm } from "@/components/landing/OrderForm";
 import { StickyBar } from "@/components/landing/StickyBar";
 import { BENEFITS, EFFECTS, IMAGES, PRODUCT, USAGE } from "@/lib/product";
@@ -71,10 +72,16 @@ function Index() {
 
           <h1 className="mt-5 text-3xl font-bold leading-snug">{PRODUCT.title}</h1>
 
-          <div className="mt-4 flex items-center justify-center gap-3">
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
             <span className="text-4xl font-bold text-price">৳{PRODUCT.price}</span>
             <span className="text-xl text-muted-foreground line-through">৳{PRODUCT.oldPrice}</span>
+            <span className="rounded-full bg-primary px-3 py-1 text-sm font-bold text-primary-foreground">
+              অফার প্রাইস
+            </span>
           </div>
+          <p className="mt-2 text-base font-semibold text-success">
+            সীমিত সময়ের অফার — ৳{PRODUCT.oldPrice - PRODUCT.price} টাকা সেভ করুন!
+          </p>
           <p className="mt-1 text-base text-muted-foreground">
             পকেট সাইজ | গোপন প্যাকেজিং | সম্পূর্ণ নিরাপদ
           </p>
@@ -240,6 +247,7 @@ function Index() {
       </footer>
 
       <StickyBar />
+      <FloatingContact />
     </div>
   );
 }
