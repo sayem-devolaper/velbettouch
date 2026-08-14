@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as ThankYouRouteImport } from './routes/thank-you'
 import { Route as TrackRouteImport } from './routes/track'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 
@@ -29,6 +30,11 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ThankYouRoute = ThankYouRouteImport.update({
+  id: '/thank-you',
+  path: '/thank-you',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TrackRoute = TrackRouteImport.update({
   id: '/track',
   path: '/track',
@@ -43,12 +49,14 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/thank-you': typeof ThankYouRoute
   '/track': typeof TrackRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/thank-you': typeof ThankYouRoute
   '/track': typeof TrackRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
 }
@@ -57,19 +65,21 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/thank-you': typeof ThankYouRoute
   '/track': typeof TrackRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/track' | '/dashboard'
+  fullPaths: '/' | '/auth' | '/thank-you' | '/track' | '/dashboard'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/track' | '/dashboard'
+  to: '/' | '/auth' | '/thank-you' | '/track' | '/dashboard'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/thank-you'
     | '/track'
     | '/_authenticated/dashboard'
   fileRoutesById: FileRoutesById
@@ -78,6 +88,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ThankYouRoute: typeof ThankYouRoute
   TrackRoute: typeof TrackRoute
 }
 
@@ -102,6 +113,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/thank-you': {
+      id: '/thank-you'
+      path: '/thank-you'
+      fullPath: '/thank-you'
+      preLoaderRoute: typeof ThankYouRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/track': {
@@ -136,6 +154,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  ThankYouRoute: ThankYouRoute,
   TrackRoute: TrackRoute,
 }
 export const routeTree = rootRouteImport

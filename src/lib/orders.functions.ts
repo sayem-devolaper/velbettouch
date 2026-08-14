@@ -28,7 +28,7 @@ export const createOrder = createServerFn({ method: "POST" })
     const deliveryCharge = getDeliveryCharge(data.delivery_area, data.quantity);
     const total = PRODUCT.price * data.quantity + deliveryCharge;
 
-    const { error } = await supabase.from("orders").insert({
+    const { data: inserted, error } = await supabase.from("orders").insert({
       customer_name: data.customer_name,
       phone: data.phone,
       address: data.address,
@@ -46,12 +46,12 @@ export const createOrder = createServerFn({ method: "POST" })
       utm_id: data.utm_id ?? null,
       fbclid: data.fbclid ?? null,
       page_url: data.page_url ?? null,
-    });
+    }).select("id").single();
 
     if (error) {
       console.error("order insert failed", error.message);
       return { ok: false as const, message: "অর্ডার জমা হয়নি, আবার চেষ্টা করুন।" };
     }
 
-    return { ok: true as const, total, deliveryCharge };
+    return { ok: true as const, total, deliveryCharge, orderId: inserted?.id ?? null };
   });
