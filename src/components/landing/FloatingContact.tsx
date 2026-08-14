@@ -4,7 +4,7 @@ export function FloatingContact() {
   return (
     <div className="fixed bottom-20 right-4 z-50 flex flex-col gap-3 md:bottom-6">
       <a
-        href={`https://m.me/${PRODUCT.messenger}`}
+        href={PRODUCT.messengerUrl}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="মেসেঞ্জারে চ্যাট করুন"
