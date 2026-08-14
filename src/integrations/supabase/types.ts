@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      ads_settings: {
+        Row: {
+          capi_enabled: boolean
+          currency: string
+          fb_capi_access_token: string | null
+          fb_domain_verification: string | null
+          fb_pixel_id: string | null
+          fb_test_event_code: string | null
+          id: string
+          pixel_enabled: boolean
+          updated_at: string
+        }
+        Insert: {
+          capi_enabled?: boolean
+          currency?: string
+          fb_capi_access_token?: string | null
+          fb_domain_verification?: string | null
+          fb_pixel_id?: string | null
+          fb_test_event_code?: string | null
+          id?: string
+          pixel_enabled?: boolean
+          updated_at?: string
+        }
+        Update: {
+          capi_enabled?: boolean
+          currency?: string
+          fb_capi_access_token?: string | null
+          fb_domain_verification?: string | null
+          fb_pixel_id?: string | null
+          fb_test_event_code?: string | null
+          id?: string
+          pixel_enabled?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
       orders: {
         Row: {
           address: string
@@ -26,6 +62,7 @@ export type Database = {
           note: string | null
           page_url: string | null
           phone: string
+          purchase_tracked: boolean
           quantity: number
           status: string
           total: number
@@ -49,6 +86,7 @@ export type Database = {
           note?: string | null
           page_url?: string | null
           phone: string
+          purchase_tracked?: boolean
           quantity?: number
           status?: string
           total: number
@@ -72,6 +110,7 @@ export type Database = {
           note?: string | null
           page_url?: string | null
           phone?: string
+          purchase_tracked?: boolean
           quantity?: number
           status?: string
           total?: number
