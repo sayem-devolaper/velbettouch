@@ -51,8 +51,10 @@ function AdsSettingsPage() {
   const settingsQuery = useQuery({
     queryKey: ["ads-settings"],
     queryFn: () => load({ data: undefined }),
-    retry: false,
+    retry: 2,
+    retryDelay: 800,
   });
+
 
   useEffect(() => {
     const data = settingsQuery.data;
@@ -108,11 +110,17 @@ function AdsSettingsPage() {
       {settingsQuery.isLoading ? (
         <p className="mt-8 text-muted-foreground">লোড হচ্ছে...</p>
       ) : settingsQuery.isError ? (
-        <p className="mt-8 text-primary">
-          {settingsQuery.error instanceof Error
-            ? settingsQuery.error.message
-            : "সেটিংস লোড হয়নি। আবার লগইন করে চেষ্টা করুন।"}
-        </p>
+        <div className="mt-8 space-y-3">
+          <p className="text-primary">
+            {settingsQuery.error instanceof Error
+              ? settingsQuery.error.message
+              : "সেটিংস লোড হয়নি। আবার লগইন করে চেষ্টা করুন।"}
+          </p>
+          <Button type="button" variant="outline" onClick={() => void settingsQuery.refetch()}>
+            আবার চেষ্টা করুন
+          </Button>
+        </div>
+
       ) : (
         <form onSubmit={handleSubmit} className="mt-6 space-y-6">
           <section className="rounded-lg border border-border bg-card p-5">
