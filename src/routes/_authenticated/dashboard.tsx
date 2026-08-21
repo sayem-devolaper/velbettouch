@@ -10,7 +10,6 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  claimAdmin,
   deleteOrder,
   listOrders,
   setOrderStatus,
@@ -68,7 +67,6 @@ function Dashboard() {
   const saveOrder = useServerFn(updateOrder);
   const changeStatus = useServerFn(setOrderStatus);
   const removeOrder = useServerFn(deleteOrder);
-  const claim = useServerFn(claimAdmin);
 
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -76,12 +74,7 @@ function Dashboard() {
 
   const ordersQuery = useQuery({
     queryKey: ["admin-orders"],
-    queryFn: async () => {
-      // A brand-new store has no admin yet: the first signed-in user claims it.
-      // Runs before the fetch so a fresh store never sees a "Forbidden" error.
-      await claim({ data: undefined }).catch(() => undefined);
-      return (await fetchOrders({ data: undefined })) as OrderRow[];
-    },
+    queryFn: async () => (await fetchOrders({ data: undefined })) as OrderRow[],
     retry: false,
   });
 
@@ -185,7 +178,9 @@ function Dashboard() {
         {ordersQuery.isLoading && <p className="mt-8 text-sm">লোড হচ্ছে...</p>}
         {ordersQuery.isError && (
           <p className="mt-8 text-sm text-primary">
-            অর্ডার দেখা যাচ্ছে না। আপনার অ্যাকাউন্টে অ্যাডমিন পারমিশন আছে কিনা দেখুন।
+            {ordersQuery.error instanceof Error
+              ? ordersQuery.error.message
+              : "অর্ডার দেখা যাচ্ছে না। আবার লগইন করে চেষ্টা করুন।"}
           </p>
         )}
 

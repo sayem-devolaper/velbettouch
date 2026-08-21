@@ -22,6 +22,8 @@ export const getPublicAdsSettings = createServerFn({ method: "GET" }).handler(as
 export const getAdsSettings = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
+    const { assertAdmin } = await import("./admin.server");
+    await assertAdmin(context);
     const { data, error } = await context.supabase
       .from("ads_settings")
       .select(
@@ -37,6 +39,8 @@ export const saveAdsSettings = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => adsSettingsSchema.parse(input))
   .handler(async ({ data, context }) => {
+    const { assertAdmin } = await import("./admin.server");
+    await assertAdmin(context);
     const { error } = await context.supabase
       .from("ads_settings")
       .update({

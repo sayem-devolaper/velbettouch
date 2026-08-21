@@ -109,7 +109,9 @@ function AdsSettingsPage() {
         <p className="mt-8 text-muted-foreground">লোড হচ্ছে...</p>
       ) : settingsQuery.isError ? (
         <p className="mt-8 text-primary">
-          সেটিংস লোড হয়নি — আপনি অ্যাডমিন হিসেবে লগইন আছেন কিনা দেখুন।
+          {settingsQuery.error instanceof Error
+            ? settingsQuery.error.message
+            : "সেটিংস লোড হয়নি। আবার লগইন করে চেষ্টা করুন।"}
         </p>
       ) : (
         <form onSubmit={handleSubmit} className="mt-6 space-y-6">
