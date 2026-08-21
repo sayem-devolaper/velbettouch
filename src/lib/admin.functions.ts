@@ -1,32 +1,16 @@
 import { createServerFn } from "@tanstack/react-start";
-import { z } from "zod";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-
-const ORDER_STATUSES = ["pending", "confirmed", "shipped", "delivered", "cancelled"] as const;
-
-const updateSchema = z.object({
-  id: z.string().uuid(),
-  customer_name: z.string().trim().min(2).max(100),
-  phone: z.string().trim().regex(/^01[3-9]\d{8}$/),
-  address: z.string().trim().min(5).max(500),
-  delivery_area: z.enum(["inside_dhaka", "outside_dhaka"]),
-  quantity: z.number().int().min(1).max(50),
-  status: z.enum(ORDER_STATUSES),
-  note: z.string().trim().max(300).optional().or(z.literal("")),
-});
-
-async function assertAdmin(context: { supabase: any; userId: string }) {
-  const { data, error } = await context.supabase.rpc("has_role", {
-    _user_id: context.userId,
-    _role: "admin",
-  });
-  if (error || !data) throw new Error("Forbidden: admin only");
-}
+import {
+  adminOrderIdSchema,
+  adminOrderStatusSchema,
+  adminOrderUpdateSchema,
+} from "./admin.schema";
 
 export const listOrders = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
+    const { assertAdmin } = await import("./admin.server");
     await assertAdmin(context);
     const { data, error } = await context.supabase
       .from("orders")
@@ -39,8 +23,9 @@ export const listOrders = createServerFn({ method: "POST" })
 
 export const updateOrder = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => updateSchema.parse(input))
+  .inputValidator((input: unknown) => adminOrderUpdateSchema.parse(input))
   .handler(async ({ data, context }) => {
+    const { assertAdmin } = await import("./admin.server");
     await assertAdmin(context);
     const { PRODUCT, getDeliveryCharge } = await import("./product");
     const deliveryCharge = getDeliveryCharge(data.delivery_area, data.quantity);
@@ -66,10 +51,9 @@ export const updateOrder = createServerFn({ method: "POST" })
 
 export const setOrderStatus = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) =>
-    z.object({ id: z.string().uuid(), status: z.enum(ORDER_STATUSES) }).parse(input),
-  )
+  .inputValidator((input: unknown) => adminOrderStatusSchema.parse(input))
   .handler(async ({ data, context }) => {
+    const { assertAdmin } = await import("./admin.server");
     await assertAdmin(context);
     const { error } = await context.supabase
       .from("orders")
@@ -81,8 +65,9 @@ export const setOrderStatus = createServerFn({ method: "POST" })
 
 export const deleteOrder = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
+  .inputValidator((input: unknown) => adminOrderIdSchema.parse(input))
   .handler(async ({ data, context }) => {
+    const { assertAdmin } = await import("./admin.server");
     await assertAdmin(context);
     const { error } = await context.supabase.from("orders").delete().eq("id", data.id);
     if (error) throw new Error(error.message);
@@ -92,11 +77,13 @@ export const deleteOrder = createServerFn({ method: "POST" })
 export const isAdmin = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { data } = await context.supabase.rpc("has_role", {
-      _user_id: context.userId,
-      _role: "admin",
-    });
-    return { admin: Boolean(data) };
+    const { assertAdmin } = await import("./admin.server");
+    try {
+      await assertAdmin(context);
+      return { admin: true };
+    } catch {
+      return { admin: false };
+    }
   });
 
 // First signed-in user of a fresh store becomes the admin. Once an admin

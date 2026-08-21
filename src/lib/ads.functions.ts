@@ -22,6 +22,8 @@ export const getPublicAdsSettings = createServerFn({ method: "GET" }).handler(as
 export const getAdsSettings = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
+    const { assertAdmin } = await import("./admin.server");
+    await assertAdmin(context);
     const { data, error } = await context.supabase
       .from("ads_settings")
       .select(
@@ -37,7 +39,9 @@ export const saveAdsSettings = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => adsSettingsSchema.parse(input))
   .handler(async ({ data, context }) => {
-    const { error } = await context.supabase
+    const { assertAdmin } = await import("./admin.server");
+    await assertAdmin(context);
+    const { data: saved, error } = await context.supabase
       .from("ads_settings")
       .update({
         fb_pixel_id: data.fb_pixel_id || null,
@@ -49,8 +53,11 @@ export const saveAdsSettings = createServerFn({ method: "POST" })
         currency: data.currency.toUpperCase(),
         updated_at: new Date().toISOString(),
       })
-      .eq("id", "default");
+      .eq("id", "default")
+      .select("id")
+      .maybeSingle();
     if (error) throw new Error(error.message);
+    if (!saved) throw new Error("সেটিংস সেভ হয়নি। অ্যাডমিন অনুমতি আবার যাচাই করুন।");
     return { ok: true as const };
   });
 
