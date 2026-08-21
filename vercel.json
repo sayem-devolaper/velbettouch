@@ -1,0 +1,12 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "bun run build",
+  "installCommand": "bun install",
+  "env": {
+    "SUPABASE_URL": "https://tuwvevjmkpcwujcnqjlr.supabase.co",
+    "SUPABASE_PUBLISHABLE_KEY": "sb_publishable_Q61AsBA7KvFKgYAMc3FP3g_Nrkg3k9z",
+    "VITE_SUPABASE_URL": "https://tuwvevjmkpcwujcnqjlr.supabase.co",
+    "VITE_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_Q61AsBA7KvFKgYAMc3FP3g_Nrkg3k9z",
+    "VITE_SUPABASE_PROJECT_ID": "tuwvevjmkpcwujcnqjlr"
+  }
+}
