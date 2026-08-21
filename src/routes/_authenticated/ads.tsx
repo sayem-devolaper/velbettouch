@@ -51,8 +51,10 @@ function AdsSettingsPage() {
   const settingsQuery = useQuery({
     queryKey: ["ads-settings"],
     queryFn: () => load({ data: undefined }),
-    retry: false,
+    retry: 2,
+    retryDelay: 800,
   });
+
 
   useEffect(() => {
     const data = settingsQuery.data;
